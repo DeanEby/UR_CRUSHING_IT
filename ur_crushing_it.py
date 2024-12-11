@@ -6,8 +6,38 @@
 # optimal distribution
 # TODO compare standard budget to real spending and see how they compare
 # TODO read up on optimal standard budget
-# TODO write file reading logic for importing data. Use .gitignore to make sure those files aren't added to repo
+# DONE write file reading logic for importing data. Use .gitignore to make sure those files aren't added to repo
 
+# initializing some global variables
+savings_goal = 5000
+snp500_estimated_performance = .08
+# How many years do we simulate
+PERIOD = 20
+
+bank = 0
+investment_portfolio = []
+debt_portfolio = {}
+
+# Reading in debt
+# A csv file with name, balance, interest_rate as column names
+debt_file = open("UR_CRUSHING_IT/secrets/debt.csv", "r")
+column_names = debt_file.readline()
+
+for line in debt_file:
+    line = line.strip()
+    line = line.split(",")
+    debt_portfolio[line[0]] = [float(line[1]), float(line[2])]
+print(debt_portfolio)
+
+
+
+# Reading in salary value
+# Just a text file with a number in it
+monthly_salary_file = open("UR_CRUSHING_IT/secrets/monthly_salary.txt", "r")
+
+monthly_salary = float(monthly_salary_file.readline())
+monthly_salary_file.close()
+#print(monthly_salary)
 
 def check_is_digit(input_str):
     if input_str.strip().isdigit():
@@ -73,12 +103,8 @@ def dict_to_string(dictionary):
     return str(dictionary).replace("{", "").replace("}", "").replace("'", "")
     
 
-    
-
-
 standard_monthly_dollar_budget = calculate_dollars_from_percentage(monthly_salary, standard_budgeting_percentage_dict)
 smdb_string = dict_to_string(standard_monthly_dollar_budget)
-print(check_budget_percentage(standard_budgeting_percentage_dict))
 
 print("Standard Budget for %s monthly salary is:" % monthly_salary, smdb_string)
 
