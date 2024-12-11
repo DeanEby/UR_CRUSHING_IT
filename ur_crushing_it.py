@@ -9,11 +9,6 @@
 # TODO write file reading logic for importing data. Use .gitignore to make sure those files aren't added to repo
 
 
-
-loans = [[5.5, 5000],[4.9, 2000], [4.9,7000],]
-
-monthly_salary = 5000
-
 def check_is_digit(input_str):
     if input_str.strip().isdigit():
         return True
