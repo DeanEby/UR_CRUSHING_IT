@@ -8,32 +8,27 @@
 # TODO read up on optimal standard budget
 # DONE write file reading logic for importing data. Use .gitignore to make sure those files aren't added to repo
 
+import pandas as pd
+
+
 # initializing some global variables
 savings_goal = 5000
 snp500_estimated_performance = .08
 # How many years do we simulate
 PERIOD = 20
+current_year = 0
 
 bank = 0
 investment_portfolio = []
 debt_portfolio = {}
 
-# Reading in debt
-# A csv file with name, balance, interest_rate as column names
-debt_file = open("UR_CRUSHING_IT/secrets/debt.csv", "r")
-column_names = debt_file.readline()
-
-for line in debt_file:
-    line = line.strip()
-    line = line.split(",")
-    debt_portfolio[line[0]] = [float(line[1]), float(line[2])]
-print(debt_portfolio)
-
-
+debt_df = pd.read_csv("secrets/debt.csv")
+debt_df['monthly_interest_rate'] = debt_df.apply(lambda row: row.interest_rate / 12, axis = 1)
+print(debt_df)
 
 # Reading in salary value
 # Just a text file with a number in it
-monthly_salary_file = open("UR_CRUSHING_IT/secrets/monthly_salary.txt", "r")
+monthly_salary_file = open("secrets/monthly_salary.txt", "r")
 
 monthly_salary = float(monthly_salary_file.readline())
 monthly_salary_file.close()
@@ -106,7 +101,7 @@ def dict_to_string(dictionary):
 standard_monthly_dollar_budget = calculate_dollars_from_percentage(monthly_salary, standard_budgeting_percentage_dict)
 smdb_string = dict_to_string(standard_monthly_dollar_budget)
 
-print("Standard Budget for %s monthly salary is:" % monthly_salary, smdb_string)
+#print("Standard Budget for %s monthly salary is:" % monthly_salary, smdb_string)
 
         
 
