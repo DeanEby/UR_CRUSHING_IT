@@ -114,7 +114,7 @@ smdb_string = dict_to_string(standard_monthly_dollar_budget)
 #print("Standard Budget for %s monthly salary is:" % monthly_salary, smdb_string)
 
 
-        
+    # Current algorithm does not account ffor 
 def calculate_debt_after_period(period, debt_df, expenses_dict):
     # convert budget % to dollars
     dollar_dict = calculate_dollars_from_percentage(monthly_salary, expenses_dict)
@@ -144,6 +144,7 @@ def calculate_debt_after_period(period, debt_df, expenses_dict):
                 interest = float(debt_df.iloc[row]["balance"] * debt_df.iloc[row]["monthly_interest_rate"])
                 # add the owed interest to a dictionary
                 loan_interest_dict[debt_df.iloc[row]["name"]] = interest
+                debt_df['monthly_interest_rate'] = debt_df.apply(lambda row: row.interest_rate / 12, axis = 1)
             
             # Calculate which loans are generating the most interest
             loan_interest_total = sum(loan_interest_dict.values())
@@ -153,7 +154,9 @@ def calculate_debt_after_period(period, debt_df, expenses_dict):
                 #print(loan_interest_dict[loan])
                 loan_interest_percent[loan] = ( loan_interest_dict[loan] / loan_interest_total)
             #print(sum(loan_interest_percent.values()))
-            #print(loan_interest_percent)
+            
+            
+            
 
             # Simulate paying off the loan
             for loan in loan_interest_dict:
@@ -170,6 +173,8 @@ def calculate_debt_after_period(period, debt_df, expenses_dict):
                 #print(payment)
             print("Month:", month)
             print("Year:", year)
+            print("Most impactful loan to pay off:", max(loan_interest_percent, key=loan_interest_percent.get))
+            print("Amount of money from interest by loan", dict_to_string(loan_interest_dict))
             print(debt_df)
             
 
