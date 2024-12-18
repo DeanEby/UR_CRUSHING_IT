@@ -190,6 +190,9 @@ def calculate_debt_after_period(period, debt_df, expenses_dict):
     return # need to design an output for this
 
 def pay_debt(debt_df, amount):
+    # if we are done paying our debt then return 
+    if (debt_df['balance'] == 0.0).all():
+        return debt_df, amount
     # dictionary to store the amount of interest being generated
     loan_interest_dict = {}
     
@@ -208,17 +211,15 @@ def pay_debt(debt_df, amount):
             debt_df.iloc[row, 1] = 0
         else:
             active_loan_count += 1
-            #return 
 
     # for each loan add the interest to the loan
     for row in range(loan_count):    
         # for each loan, calculate the interest owed in dollars
         interest = float(debt_df.iloc[row]["balance"] * debt_df.iloc[row]["monthly_interest_rate"])
         
-        #print("interest:", interest)
         # add the owed interest to the dictionary
         loan_interest_dict[debt_df.iloc[row]["name"]] = interest
-    #return
+
     # Calculate which loans are generating the most interest
     loan_interest_total = sum(loan_interest_dict.values())
     loan_interest_percent_dict = {}
@@ -227,6 +228,14 @@ def pay_debt(debt_df, amount):
         loan_interest_percent_dict[loan] = ( loan_interest_dict[loan] / loan_interest_total)
 
 
+        df_row = debt_df.loc[debt_df['name'] == loan]
+        
+        index = debt_df.loc[debt_df['name'] == loan].index[0]
+        balance = df_row['balance']
+        balance = float(balance.iloc[0])
+        balance_including_interest = balance + loan_interest_dict[loan]
+        debt_df.iloc[index, 1] = balance_including_interest
+    
     print("should be 100:",sum(loan_interest_percent_dict.values()))
     # Simulate paying off the loan
     extra = 0
@@ -236,7 +245,6 @@ def pay_debt(debt_df, amount):
 
     for loan in loan_interest_dict:
         # find the row in the dataframe that matches the current loan
-        
         df_row = debt_df.loc[debt_df['name'] == loan]
         
         index = debt_df.loc[debt_df['name'] == loan].index[0]
@@ -249,14 +257,10 @@ def pay_debt(debt_df, amount):
             payment = total_debt * loan_interest_percent_dict[loan]
         else:
             payment = debt_monthly_budgeted * loan_interest_percent_dict[loan]
-
-        # print("debt amount:", debt_df.iloc[index, 1])
-        # print("amount paid:", payment)
-        
-        debt_balance = (balance + loan_interest_dict[loan]) - payment
+        debt_balance = balance - payment
         debt_df.iloc[index, 1] = debt_balance
     return debt_df, extra
-#debt_calculation = calculate_debt_after_period(PERIOD, debt_df, standard_budgeting_percentage_dict)
+
 
 
 
